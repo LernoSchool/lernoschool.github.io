@@ -286,9 +286,10 @@ const LERNO_V17_VOCATIONAL_COMMON={
 
 function lernoV17FieldLabel(track=profile.track,custom=profile.customTrack){return track==='other'?(custom||'رشته دیگر'):(LERNO_V17_FIELD_LABELS[track]||LERNO_TRACK_LABELS[track]||'')}
 function lernoV17ApplyGradeBand(){
-  document.body.classList.remove('grade-primary','grade-middle','grade-high');
-  let index=gradeOptions.indexOf(profile.grade),band=index<0?'grade-middle':index<6?'grade-primary':index<9?'grade-middle':'grade-high';
-  document.body.classList.add(band);
+  document.body.classList.remove('grade-primary','grade-early','grade-upper','grade-middle','grade-high');
+  let index=gradeOptions.indexOf(profile.grade),band=index<0?'middle':index<3?'early':index<6?'upper':index<9?'middle':'high';
+  document.body.classList.add('grade-'+band);if(band==='early'||band==='upper')document.body.classList.add('grade-primary');
+  profile.experienceMode=band;
   let hero=$('#home .hero>div:first-child>small');if(hero)hero.textContent=profile.grade?'فضای برنامه‌ریزی '+profile.grade:'فضای شخصی دانش‌آموز';
 }
 function lernoV17PopulateTracks(branch,selected=''){
@@ -390,7 +391,6 @@ editCalendarItem=function(item){
 };
 deleteCalendarItem=function(item){let wrap=document.createElement('div');wrap.innerHTML='<p>آیا از حذف این مورد مطمئنی؟</p><button class="blue" data-yes>بله، حذف شود</button>';siteDialog('حذف '+entryTypeLabel(item.type),wrap,()=>{if(item.source==='entry'){entries=entries.filter(entry=>entry.id!==item.id);tasks=tasks.filter(task=>task.calendarEntryId!==item.id);saveCalendarEntries();saveTasks()}else if(item.source==='todo'){todos=todos.filter(todo=>todo.id!==item.id);saveTodos()}else{tasks=tasks.filter(task=>task.id!==item.id);saveTasks()}renderEntryList()})};
 
-let legend=$('#calendar .legend');if(legend&&!legend.querySelector('.legend-todo')){let item=document.createElement('span');item.className='legend-todo';item.textContent='● کار';legend.append(item)}
 Object.entries({calendar:'برنامه‌هایت را اینجا ثبت کن.',schedule:'درس هر زنگ و هر روز هفته را اینجا ثبت کن.',tasks:'تکلیف‌هایت را همراه درس و مهلت تحویل مدیریت کن.',todo:'کارهای شخصی‌ات را با تاریخ، ساعت و میزان اهمیت مرتب کن.',profile:'اطلاعات تحصیلی و تصویر پروفایلت را اینجا تنظیم کن.'}).forEach(([id,text])=>{let paragraph=$('#'+id+' .page-title p');if(paragraph)paragraph.textContent=text});
 resetProfileDraft();populateSubjectControls();drawTodos();drawSchedule();paint();drawCalendar();
 
@@ -481,11 +481,11 @@ resetProfileDraft();paint();
   function openGlobalSearch(){let wrap=document.createElement('div');wrap.className='search-dialog';wrap.innerHTML='<label class="search-field"><span aria-hidden="true">⌕</span><input id="globalSearchInput" type="search" autocomplete="off" placeholder="نام تکلیف، درس یا کار را بنویس..."></label><div id="globalSearchResults" class="search-results"></div>';let modal=siteDialog('جست‌وجو در LERNO',wrap),input=wrap.querySelector('input');input.oninput=()=>renderSearchResults(input.value,wrap.querySelector('.search-results'),modal);renderSearchResults('',wrap.querySelector('.search-results'),modal);setTimeout(()=>input.focus(),50)}
   function renderSearchResults(query,box,modal){let needle=normalizeSearch(query),items=searchIndex().filter(item=>!needle||normalizeSearch(item.title+' '+item.meta).includes(needle)).slice(0,20);box.innerHTML='';if(!items.length){let empty=document.createElement('p');empty.className='search-empty';empty.textContent='نتیجه‌ای پیدا نشد.';box.append(empty);return}items.forEach(item=>{let button=document.createElement('button');button.type='button';button.className='search-result';let copy=document.createElement('span'),title=document.createElement('b'),meta=document.createElement('small');title.textContent=item.title;meta.textContent=item.meta;copy.append(title,meta);button.append(copy);button.insertAdjacentHTML('beforeend','<i aria-hidden="true">←</i>');button.onclick=()=>{modal.remove();if(item.page==='calendar'&&item.date){cursor=clampCalendarCursor(jalaliParts(new Date(item.date+'T12:00:00')));drawCalendar()}lernoNavigate(item.page)};box.append(button)})}
 
-  function dueNotifications(){let today=ymd(new Date()),tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);let tomorrowKey=ymd(tomorrow),now=new Date();now.setHours(0,0,0,0),items=[];
+  function dueNotifications(){let today=ymd(new Date()),now=new Date(),lead=Math.max(0,Math.min(2,Number(localStorage.getItem('lerno-reminder-days')||1)));now.setHours(0,0,0,0);let items=[];
     tasks.filter(item=>!item.done&&item.date).forEach(item=>items.push({title:item.title,date:item.date,page:'tasks',type:item.kind==='project'?'پروژه':'تکلیف'}));
     todos.filter(item=>!item.done&&item.date).forEach(item=>items.push({title:item.title,date:item.date,page:'todo',type:item.priority==='important'?'کار مهم':'کار'}));
     entries.filter(item=>item.date&&(item.type==='exam'||item.type==='project')).forEach(item=>items.push({title:item.text,date:item.date,page:'calendar',type:entryTypeLabel(item.type)}));
-    return items.map(item=>{let day=new Date(item.date+'T12:00:00'),diff=Math.round((day-now)/86400000),status=item.date<today?'عقب‌افتاده':item.date===today?'امروز':item.date===tomorrowKey?'فردا':diff<=7?'این هفته':'';return {...item,status,diff}}).filter(item=>item.status).sort((a,b)=>a.date.localeCompare(b.date))
+    return items.map(item=>{let day=new Date(item.date+'T12:00:00'),diff=Math.round((day-now)/86400000),status=item.date<today?'عقب‌افتاده':diff===0?'امروز':diff===1&&lead>=1?'فردا':diff===2&&lead>=2?'پس‌فردا':'';return {...item,status,diff}}).filter(item=>item.status).sort((a,b)=>a.date.localeCompare(b.date))
   }
   function remindersEnabled(){return localStorage.getItem('lerno-inapp-reminders')!=='off'}
   function updateNotificationBadge(){let badge=$('#v20BellBadge');if(!badge)return;let count=remindersEnabled()?dueNotifications().length:0;badge.hidden=!count;badge.textContent=fa(Math.min(count,99))}
@@ -602,4 +602,55 @@ resetProfileDraft();paint();
       field.value=correctExamSpelling(field.value);
     });
   },true);
+})();
+
+/* نسخه ۲۴: داشبورد واقعی خانه */
+(function lernoV24Home(){
+  const todayKey=()=>ymd(new Date());
+  const startOfDay=value=>{let date=value instanceof Date?new Date(value):new Date(value+'T12:00:00');date.setHours(0,0,0,0);return date};
+  const persianShortDate=value=>new Intl.DateTimeFormat('fa-IR-u-ca-persian',{weekday:'long',day:'numeric',month:'long'}).format(new Date(value+'T12:00:00'));
+  const dueLabel=value=>{
+    if(!value)return 'بدون تاریخ';let today=todayKey(),tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);
+    if(value<today)return 'مهلت گذشته';if(value===today)return 'امروز';if(value===ymd(tomorrow))return 'فردا';return persianShortDate(value);
+  };
+  function greeting(){let first=(profile.name||'').trim().split(/\s+/)[0],title=$('#homeGreeting');if(title)title.textContent=first?'سلام '+first+'؛ برنامهٔ امروزت آماده است':'سلام؛ برنامهٔ امروزت آماده است'}
+  function importantItems(){
+    let today=todayKey(),items=[];
+    tasks.filter(item=>!item.done).forEach(item=>items.push({source:'task',record:item,title:item.title,date:item.date||'',type:item.kind==='project'?'پروژه':'تکلیف',important:false}));
+    todos.filter(item=>!item.done).forEach(item=>items.push({source:'todo',record:item,title:item.title,date:item.date||'',time:item.time||'',type:item.priority==='important'?'کار مهم':'کار',important:item.priority==='important'}));
+    return items.sort((a,b)=>{let rank=item=>item.date&&item.date<today?0:item.date===today?1:item.important?2:item.date?3:4;return rank(a)-rank(b)||String(a.date||'9999').localeCompare(String(b.date||'9999'))||b.record.id-a.record.id}).slice(0,4);
+  }
+  function drawImportant(){
+    let box=$('#homeImportantList');if(!box)return;let items=importantItems();box.innerHTML='';
+    if(!items.length){let empty=document.createElement('div');empty.className='home-empty-state';empty.innerHTML='<span>فعلاً کار مهمی باقی نمانده است.</span><button type="button">ثبت اولین کار</button>';empty.querySelector('button').onclick=()=>$('#quickAdd')?.click();box.append(empty);return}
+    items.forEach(item=>{let label=document.createElement('label');label.className='home-important-row '+(item.date&&item.date<todayKey()?'is-late':'');let check=document.createElement('input');check.type='checkbox';check.setAttribute('aria-label','انجام شد: '+item.title);let copy=document.createElement('span');copy.className='home-important-copy';let title=document.createElement('b');title.textContent=item.title;let meta=document.createElement('small');meta.textContent=item.type+' · '+dueLabel(item.date)+(item.time?' · ساعت '+item.time:'');copy.append(title,meta);let chip=document.createElement('em');chip.className='home-priority-chip';chip.textContent=item.date&&item.date<todayKey()?'عقب‌افتاده':item.important?'مهم':item.date===todayKey()?'امروز':'بعدی';check.onchange=()=>{item.record.done=true;item.source==='task'?saveTasks():saveTodos();toast('انجام شد ✓')};label.append(check,copy,chip);box.append(label)})
+  }
+  function drawExam(){
+    let box=$('#homeExamList');if(!box)return;let today=startOfDay(new Date()),exam=entries.filter(item=>item.type==='exam'&&startOfDay(item.date)>=today).sort((a,b)=>a.date.localeCompare(b.date))[0];box.innerHTML='';
+    if(!exam){let empty=document.createElement('div');empty.className='home-empty-state';empty.innerHTML='<span>هنوز امتحانی ثبت نکرده‌ای.</span><button type="button">ثبت امتحان</button>';empty.querySelector('button').onclick=()=>lernoNavigate('calendar');box.append(empty);return}
+    let days=Math.max(0,Math.round((startOfDay(exam.date)-today)/86400000)),card=document.createElement('div');card.className='home-exam-countdown';card.innerHTML='<small>نزدیک‌ترین امتحان</small><strong></strong><div class="home-exam-days"><b></b><span></span></div><div class="home-exam-date"><span></span><span>برای مرور آماده شو</span></div><button class="home-exam-open" type="button">بازکردن در تقویم</button>';card.querySelector('strong').textContent=exam.text;card.querySelector('.home-exam-days b').textContent=fa(days);card.querySelector('.home-exam-days span').textContent=days===0?'امروز':days===1?'روز مانده':'روز مانده';card.querySelector('.home-exam-date span').textContent=persianShortDate(exam.date);card.querySelector('button').onclick=()=>{cursor=clampCalendarCursor(jalaliParts(new Date(exam.date+'T12:00:00')));drawCalendar();lernoNavigate('calendar')};box.append(card)
+  }
+  function tomorrowSchoolDate(){let date=new Date();date.setDate(date.getDate()+1);while(date.getDay()===5)date.setDate(date.getDate()+1);return date}
+  function bagItemName(subject){let value=String(subject||'').trim();if(/ورزش/.test(value))return 'لباس و وسایل ورزش';if(/هنر|نقاشی/.test(value))return 'وسایل '+value;if(/آزمایش/.test(value))return 'وسایل '+value;return 'کتاب و دفتر '+value}
+  function drawBag(){
+    let box=$('#homeBagList'),status=$('#homeBagProgress'),dayLabel=$('#homeBagDay');if(!box||!status)return;let date=tomorrowSchoolDate(),key=ymd(date),day=schoolDayIndex(date),subjects=[...new Set(schedule.filter(item=>item.day===day&&item.subject).sort((a,b)=>(a.period||0)-(b.period||0)).map(item=>item.subject))],names=subjects.map(bagItemName),saved=JSON.parse(localStorage.getItem('lerno-bag-checks')||'{}'),checked=new Set((saved[key]||[]).filter(name=>names.includes(name)));box.innerHTML='';if(dayLabel)dayLabel.textContent='برنامهٔ '+weekDays[day];
+    if(!subjects.length){let empty=document.createElement('div');empty.className='home-empty-state';empty.innerHTML='<span>برای '+weekDays[day]+' هنوز درسی ثبت نشده است.</span><button type="button">تنظیم برنامه هفتگی</button>';empty.querySelector('button').onclick=()=>lernoNavigate('schedule');box.append(empty);status.textContent='';return}
+    subjects.forEach(subject=>{let name=bagItemName(subject),label=document.createElement('label');label.className='home-bag-row '+(checked.has(name)?'is-ready':'');let input=document.createElement('input');input.type='checkbox';input.checked=checked.has(name);let span=document.createElement('span');span.textContent=name;input.onchange=()=>{input.checked?checked.add(name):checked.delete(name);saved[key]=[...checked];localStorage.setItem('lerno-bag-checks',JSON.stringify(saved));label.classList.toggle('is-ready',input.checked);drawBagProgress()};label.append(input,span);box.append(label)});
+    function drawBagProgress(){status.textContent=checked.size===subjects.length?'کیف فردا آماده است ✓':fa(subjects.length-checked.size)+' مورد باقی مانده است.'}drawBagProgress()
+  }
+  function drawQuickNote(){let notes=JSON.parse(localStorage.getItem('lerno-quick-notes')||'[]'),latest=notes[0],label=$('#homeLastNote');if(label)label.textContent=latest?latest.text:'یک نکته را همین‌جا نگه دار.'}
+  function setupQuickNote(){let form=$('#homeQuickNoteForm'),input=$('#homeQuickNote');if(!form||!input)return;form.onsubmit=event=>{event.preventDefault();let text=input.value.trim();if(!text)return;let notes=JSON.parse(localStorage.getItem('lerno-quick-notes')||'[]');notes.unshift({id:Date.now(),text,date:new Date().toISOString()});localStorage.setItem('lerno-quick-notes',JSON.stringify(notes.slice(0,20)));input.value='';drawQuickNote();toast('یادداشت ذخیره شد ✓')}}
+  function drawHome(){greeting();drawImportant();drawExam();drawBag();drawQuickNote()}
+  window.lernoDrawHome=drawHome;
+  const saveTasksBeforeHome=saveTasks;
+  saveTasks=function(){saveTasksBeforeHome();drawHome()};
+  const saveTodosBeforeHome=saveTodos;
+  saveTodos=function(){saveTodosBeforeHome();drawHome()};
+  const saveEntriesBeforeHome=saveCalendarEntries;
+  saveCalendarEntries=function(){saveEntriesBeforeHome();drawHome()};
+  const saveScheduleBeforeHome=saveSchedule;
+  saveSchedule=function(){saveScheduleBeforeHome();drawHome()};
+  const paintBeforeHome=paint;
+  paint=function(){paintBeforeHome();greeting();drawBag()};
+  setupQuickNote();drawHome();
 })();
