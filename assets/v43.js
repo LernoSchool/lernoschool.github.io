@@ -43,7 +43,7 @@
     const hourValues=Array.from({length:24},(_,index)=>index),minuteValues=Array.from({length:12},(_,index)=>index*5);
     const render=()=>{q('.preview-hour',body).textContent=fa(String(hour).padStart(2,'0'));q('.preview-minute',body).textContent=fa(String(minute).padStart(2,'0'));qa('.hours button',body).forEach(item=>{const active=Number(item.dataset.value)===hour;item.classList.toggle('selected',active);item.setAttribute('aria-selected',active)});qa('.minutes button',body).forEach(item=>{const active=Number(item.dataset.value)===minute;item.classList.toggle('selected',active);item.setAttribute('aria-selected',active)})};
     build(hours,hourValues,hour,value=>{hour=value;render()});build(minutes,minuteValues,minute,value=>{minute=value;render()});
-    const bindScroll=(container,values,setter)=>{let timer;container.addEventListener('scroll',()=>{clearTimeout(timer);timer=setTimeout(()=>{const index=Math.max(0,Math.min(values.length-1,Math.round(container.scrollTop/rowHeight)));setter(values[index]);container.scrollTo({top:index*rowHeight,behavior:'smooth'});render()},90)},{passive:true})};
+    const bindScroll=(container,values,setter)=>{container.addEventListener('scroll',()=>{const index=Math.max(0,Math.min(values.length-1,Math.round(container.scrollTop/rowHeight)));setter(values[index]);render()},{passive:true})};
     bindScroll(hours,hourValues,value=>hour=value);bindScroll(minutes,minuteValues,value=>minute=value);render();
     const modal=showDialog('انتخاب ساعت',body);modal?.classList.add('clock-modal-v43');
     q('.no-time',body).onclick=()=>{hidden.value='';paintTimeButton(button,'');modal?.remove()};
