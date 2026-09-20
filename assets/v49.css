@@ -1,0 +1,35 @@
+#lernoOnboarding .ob-option b{border-radius:9px!important}
+#lernoOnboarding .ob-summary b{overflow-wrap:anywhere;line-height:1.8}
+.bag-card49{padding:20px;background:var(--white);border:1px solid var(--line);border-radius:20px;max-width:900px;margin:0 auto}
+.bag-form49{display:flex;gap:12px;margin:18px 0}.bag-form49 input{flex:1;min-width:0;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit}.bag-form49 button{height:48px!important;margin:0!important}
+.bag-row49{display:flex;align-items:center;gap:8px;margin:8px 0}.bag-check49{display:flex;align-items:center;gap:12px;flex:1;min-width:0;padding:12px;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:12px;text-align:right;font:inherit;cursor:pointer}.bag-check49 span{overflow-wrap:anywhere}.bag-check49 i{flex:0 0 24px;width:24px;height:24px;border:2px solid var(--line);border-radius:7px;font-style:normal;text-align:center;line-height:24px}.bag-check49[aria-pressed=true] i{background:#1677ff;border-color:#1677ff;color:white}.bag-check49[aria-pressed=true] span{text-decoration:line-through;color:var(--muted)}
+body #homeQuickNoteForm{display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:12px!important;height:auto!important}body #homeQuickNote{flex:1 1 220px!important;min-width:0!important}body #homeQuickNoteForm .quick-bag-date49{white-space:normal;height:auto!important;min-height:44px!important;margin:0!important;max-width:100%}body #homeQuickNoteForm button.blue{height:48px!important;min-height:48px!important;margin:0!important}
+@media(max-width:600px){.bag-card49{padding:14px}.bag-form49{flex-wrap:wrap}.bag-form49 input{flex-basis:100%}.bag-form49 button{width:100%}.bag-date49{width:100%;white-space:normal}body #homeQuickNoteForm>label{width:100%}body #homeQuickNote{flex-basis:100%!important}.quick-bag-date49{flex:1}.bag-row49>.plain{padding:8px!important}}
+
+.bag-icon50{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+#schoolbag49 .bag-help50{float:left;margin:0!important;min-height:44px}#schoolbag49 .page-title:after{content:"";display:block;clear:both}
+.bag-week-nav50{display:flex;justify-content:space-between;gap:8px;margin:18px 0 12px}.bag-week-nav50 button{margin:0!important;min-height:44px}
+.bag-days50{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}.bag-day50{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 3px;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);font:inherit;cursor:pointer;min-width:0}.bag-day50 small{color:var(--muted);font-size:11px}.bag-day50 b{font-size:12px}.bag-day50[aria-pressed=true]{background:#1677ff;color:white;border-color:#1677ff}.bag-day50[aria-pressed=true] small{color:white}.bag-sync50{color:var(--muted);font-size:13px;line-height:1.9}.bag-day50:focus-visible{outline:3px solid #68adff;outline-offset:2px}
+@media(max-width:600px){.bag-days50{grid-template-columns:repeat(4,minmax(0,1fr))}.bag-week-nav50 button{padding:8px!important;font-size:12px!important}#schoolbag49 .bag-help50{float:none;display:inline-flex;margin-bottom:12px!important}.bag-card49{width:100%;box-sizing:border-box}}
+
+/* Compact, scoped school-bag controls. */
+body #schoolbag49 .bag-card49{max-width:900px;width:100%;box-sizing:border-box}
+body #schoolbag49 .bag-toolbar51{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:10px;padding-bottom:14px;margin-bottom:14px;border-bottom:1px solid var(--line)}
+body #schoolbag49 .bag-week-nav50{display:flex;justify-content:flex-start;align-items:center;gap:6px;margin:0}
+body #schoolbag49 .bag-toolbar51 button{width:auto!important;height:44px!important;min-height:44px!important;margin:0!important;padding:0 12px!important;font-size:12px!important;line-height:1.5!important;border-radius:10px!important;white-space:nowrap}
+body #schoolbag49 .bag-date49{display:flex;align-items:center;background:var(--paper)!important}
+body #schoolbag49 .bag-days50{position:relative;display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr))!important;gap:6px!important;padding:3px;margin:0;max-width:100%;box-sizing:border-box}
+body #schoolbag49 .bag-day50{height:72px!important;min-height:72px!important;margin:0!important;padding:10px 4px!important;border-radius:12px!important;justify-content:center;gap:4px}
+body #schoolbag49 .bag-sync50{margin:20px 0 10px;font-weight:700;color:var(--ink)}
+body #schoolbag49 .bag-form49{margin:0 0 16px;gap:8px}
+@media(max-width:600px){body #schoolbag49 .bag-toolbar51{gap:8px}body #schoolbag49 .bag-date49{flex-basis:100%;justify-content:center;white-space:normal}body #schoolbag49 .bag-week-nav50{display:grid;grid-template-columns:repeat(3,1fr);width:100%}body #schoolbag49 .bag-toolbar51 button{padding:0 8px!important}body #schoolbag49 .bag-days50{display:flex!important;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:thin;scrollbar-color:#7193bb transparent;padding-bottom:10px}body #schoolbag49 .bag-day50{flex:0 0 82px;scroll-snap-align:center}body #schoolbag49 .bag-form49 input{min-height:44px;box-sizing:border-box}}
+
+/* A compact, fixed current-week picker and clear checkable bag list. */
+body #schoolbag49 .bag-week-caption52{font-size:13px;color:var(--muted);font-weight:700;margin:0 0 12px}
+body #schoolbag49 .page-back-icon52{width:52px!important;height:52px!important;min-height:52px!important;padding:0!important;display:inline-grid!important;place-items:center;border-radius:16px!important}
+body #schoolbag49 .page-back-icon52 svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+body #schoolbag49 .bag-days50{display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr))!important;overflow:visible!important;padding:0!important}
+body #schoolbag49 .bag-day50{height:76px!important;min-height:76px!important;flex:auto!important}
+body #schoolbag49 .bag-check49{min-height:52px;align-items:center}
+body #schoolbag49 .bag-check49 i{border-radius:8px}
+@media(max-width:600px){body #schoolbag49 .bag-days50{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:7px!important}body #schoolbag49 .bag-day50{height:70px!important;min-height:70px!important;font-size:12px}body #schoolbag49 .bag-day50:nth-child(5){grid-column:1}body #schoolbag49 .bag-week-caption52{margin-top:2px}}

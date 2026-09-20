@@ -33,14 +33,14 @@
     if(!button)return;button.classList.toggle('empty',!value);const label=q('span',button);if(label)label.textContent=value?fa(value):'انتخاب ساعت';
   }
   function openWheelClock(hidden,button){
-    const now=new Date(),saved=(hidden.value||'').split(':'),initialHour=Number(saved[0]||now.getHours()),initialMinute=saved[1]!==undefined?Math.round(Number(saved[1])/5)*5:Math.round(now.getMinutes()/5)*5;
-    let hour=Math.min(23,initialHour),minute=initialMinute===60?55:Math.min(55,initialMinute);
+    const now=new Date(),saved=(hidden.value||'').split(':'),initialHour=Number(saved[0]||now.getHours()),initialMinute=saved[1]!==undefined?Number(saved[1]):now.getMinutes();
+    let hour=Math.min(23,initialHour),minute=Math.max(0,Math.min(59,initialMinute));
     const body=document.createElement('div');body.className='clock-wheel-v43';
     body.innerHTML='<div class="clock-preview-v43"><span class="preview-hour"></span><i>:</i><span class="preview-minute"></span></div><div class="clock-wheels-v43"><section><b>ساعت</b><div class="clock-wheel-list hours" role="listbox"></div></section><section><b>دقیقه</b><div class="clock-wheel-list minutes" role="listbox"></div></section></div><div class="clock-actions-v43"><button class="plain no-time" type="button">بدون ساعت</button><button class="blue accept-time" type="button">تأیید ساعت</button></div>';
     const hours=q('.hours',body),minutes=q('.minutes',body),rowHeight=54;
     const build=(container,values,current,setter)=>values.forEach(value=>{const item=document.createElement('button');item.type='button';item.dataset.value=value;item.setAttribute('role','option');item.textContent=fa(String(value).padStart(2,'0'));item.onclick=()=>{setter(value);container.scrollTo({top:valueIndex(values,value)*rowHeight,behavior:'smooth'})};container.append(item)});
     const valueIndex=(values,value)=>Math.max(0,values.indexOf(value));
-    const hourValues=Array.from({length:24},(_,index)=>index),minuteValues=Array.from({length:12},(_,index)=>index*5);
+    const hourValues=Array.from({length:24},(_,index)=>index),minuteValues=Array.from({length:60},(_,index)=>index);
     const render=()=>{q('.preview-hour',body).textContent=fa(String(hour).padStart(2,'0'));q('.preview-minute',body).textContent=fa(String(minute).padStart(2,'0'));qa('.hours button',body).forEach(item=>{const active=Number(item.dataset.value)===hour;item.classList.toggle('selected',active);item.setAttribute('aria-selected',active)});qa('.minutes button',body).forEach(item=>{const active=Number(item.dataset.value)===minute;item.classList.toggle('selected',active);item.setAttribute('aria-selected',active)})};
     build(hours,hourValues,hour,value=>{hour=value;render()});build(minutes,minuteValues,minute,value=>{minute=value;render()});
     const bindScroll=(container,values,setter)=>{container.addEventListener('scroll',()=>{const index=Math.max(0,Math.min(values.length-1,Math.round(container.scrollTop/rowHeight)));setter(values[index]);render()},{passive:true})};

@@ -652,6 +652,7 @@ body.grade-high .shortcuts button,body.grade-high .task{border-radius:11px}
 .logo>img{width:39px;height:39px;border-radius:12px}
 .logo>span{display:flex;direction:ltr;align-items:baseline;font:850 23px/1 Arial,sans-serif;letter-spacing:-.8px}
 .logo>span i,.logo>span b{font:inherit}
+.logo>span i{color:#fff!important}.logo>span b{color:#247cff!important}
 .sidebar nav{gap:4px}.sidebar nav button{padding:10px 14px;font-size:12px}
 
 .home-hero{position:relative;min-height:260px;display:grid;grid-template-columns:minmax(0,1fr) 210px;align-items:center;gap:26px;padding:39px 44px;overflow:hidden;border:1px solid #d6e5fa;border-radius:24px;background:linear-gradient(125deg,#f8fbff 0%,#edf5ff 52%,#e2efff 100%);box-shadow:0 18px 46px #123b7410}
