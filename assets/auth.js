@@ -1,8 +1,8 @@
 (function(){
   const rawGet=Storage.prototype.getItem,rawSet=Storage.prototype.setItem,rawRemove=Storage.prototype.removeItem;
-  const AUTH_ACCOUNTS='lerno-v26-auth-accounts',AUTH_SESSION='lerno-v26-auth-session',AUTH_LAST_PHONE='lerno-v26-auth-last-phone',ONBOARDING_KEY='lerno-v44-welcome-cards',ONBOARDING_DATA='lerno-v44-welcome-data',FRESH_START_KEY='lerno-v44-fresh-start-complete',TEN_DAYS=10*24*60*60*1000;
+  const AUTH_ACCOUNTS='lerno-v26-auth-accounts',AUTH_SESSION='lerno-v26-auth-session',AUTH_LAST_PHONE='lerno-v26-auth-last-phone',ONBOARDING_KEY='lerno-v44-welcome-cards',ONBOARDING_DATA='lerno-v44-welcome-data',FRESH_START_KEY='lerno-v59-fresh-test-complete',TEN_DAYS=10*24*60*60*1000;
   const readRaw=key=>rawGet.call(localStorage,key),writeRaw=(key,value)=>rawSet.call(localStorage,key,value),removeRaw=key=>rawRemove.call(localStorage,key);
-  /* یک بازنشانی آزمایشی برای دیدن تجربهٔ واقعی ورود اول در نسخهٔ ۴۴ */
+  /* نسخهٔ تحویلِ تست: یک‌بار همهٔ داده‌های قبلی را پاک کن تا کاربر دقیقاً کارت‌های شروع را ببیند. */
   if(readRaw(FRESH_START_KEY)!=='yes'){
     for(let index=localStorage.length-1;index>=0;index--){const key=localStorage.key(index);if(key&&key.startsWith('lerno-'))removeRaw(key)}
     writeRaw(FRESH_START_KEY,'yes');
